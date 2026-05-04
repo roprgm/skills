@@ -68,6 +68,8 @@ The folder structure should be easy for a human to navigate.
 
 Do not create folders just because a template usually has them. Create folders when they reduce cognitive load.
 
+Avoid the `src/` wrapper folder. Place code folders (`app`, `components`, `features`, `hooks`, `lib`, etc.) directly at the project root, sitting alongside the config files. The root staying clean is a function of folder organization and naming, not of nesting everything one level deeper. This applies to Vite, Next.js, and any other TypeScript React setup. If a tool's default scaffold puts code under `src/`, reconfigure it (Vite: move the entry file to the root and update the `<script>` tag in `index.html`).
+
 If a folder would contain only one or two files, it often does not need to exist yet. If a folder grows beyond roughly 10–15 files, consider splitting it. Start simple, then introduce structure as the project grows.
 
 Keep generic shared code separate from domain-specific code.
@@ -149,7 +151,7 @@ The key idea is that the product’s complexity lives mostly in the browser. The
 
 Use Vite for this case.
 
-For Vite apps, keep the frontend under `src` and apply the same simple-to-feature-based structure there. Keep entry files like `main.tsx` and `app.tsx` simple and focused on bootstrapping and high-level composition.
+For Vite apps, place code folders (`app`, `components`, `features`, `hooks`, `lib`) directly at the project root — do not use the default `src/` wrapper. The Vite entry (`main.tsx`) lives at the root and is referenced from `index.html` as `/main.tsx`. Apply the same simple-to-feature-based folder progression. Keep `main.tsx` and `app.tsx` focused on bootstrapping and high-level composition.
 
 Add a router when the app has real navigation. Prefer React Router or TanStack Router instead of manual route conditionals in one large file.
 
