@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   color-scheme: dark;
 
@@ -57,4 +59,34 @@
   --warn:    oklch(0.65 0.18 70);
   --error:   oklch(0.55 0.24 25);
   --info:    oklch(0.55 0.20 250);
+}
+
+/* Expose the runtime CSS vars to Tailwind v4 as utility classes
+   (bg-surface-1, text-muted, h-control, font-sans, etc.). No
+   tailwind.config.{js,ts} required. */
+@theme inline {
+  --color-bg:            var(--bg);
+  --color-surface-1:     var(--surface-1);
+  --color-surface-2:     var(--surface-2);
+  --color-surface-3:     var(--surface-3);
+  --color-surface-4:     var(--surface-4);
+  --color-border:        var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text:          var(--text);
+  --color-muted:         var(--text-muted);
+  --color-subtle:        var(--text-subtle);
+  --color-accent:        var(--accent);
+  --color-accent-fg:     var(--accent-fg);
+  --color-success:       var(--success);
+  --color-warn:          var(--warn);
+  --color-error:         var(--error);
+  --color-info:          var(--info);
+
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --height-control: var(--h-control);
+  --height-row:     var(--h-row);
+  --height-band:    var(--h-band);
+  --height-compact: var(--h-compact);
 }

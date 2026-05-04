@@ -38,7 +38,13 @@ If a *foundational* value (a surface fill, a text color, the accent) isn't expre
 
 ## Tokens
 
-Keep `globals.css` minimal: declare CSS custom properties for the two themes and nothing else. `tailwind.config` maps those vars to utility classes so components consume tokens by name (`bg-surface-1`, `text-muted`) rather than `var(...)`.
+All design tokens live in one CSS file (typically `globals.css` or `app.css`). **Default to Tailwind v4** — declare runtime CSS custom properties in `:root` and `[data-theme="light"]`, then expose them as utility classes via a single `@theme inline` block in the same file. No `tailwind.config.{js,ts}` is needed; v4 reads the theme from CSS. Components consume tokens by name (`bg-surface-1`, `text-muted`, `h-control`) — never `var(...)` directly.
+
+### Tailwind setup
+
+- **Vite + React:** install `tailwindcss` and `@tailwindcss/vite`, add the plugin to `vite.config.ts`. **Do not create `postcss.config.{js,ts,mjs}`** — v4 with the Vite plugin doesn't use PostCSS.
+- **Next.js:** install `tailwindcss` and `@tailwindcss/postcss`, configure a one-line `postcss.config.mjs` containing only `'@tailwindcss/postcss': {}`. **Do not include `autoprefixer`, `postcss-import`, `tailwindcss/nesting`, or `postcss-nested`** — the v4 plugin handles all of that.
+- **No `tailwind.config.{js,ts}`** — if a Tailwind v3 codebase still pins `tailwind.config`, mirror the same mappings in `theme.extend`. For everything new, prefer v4.
 
 ### Categories
 
@@ -172,4 +178,5 @@ Defaults to avoid unless there's a specific reason:
 - Vertical column dividers in tables.
 - Animated underlines, animated gradients, anything pulsing.
 - Inline styles for static design values (colors, font sizes, fixed spacing) when a token would express them. (Dynamic values — positions, offsets, measured sizes — are fine inline.)
+- **Tailwind v3 leftovers in a v4 project:** a separate `tailwind.config.{js,ts}` mapping CSS vars to colors/heights/etc., a `postcss.config.{js,ts,mjs}` in a Vite project, or `autoprefixer` / `postcss-import` / `postcss-nested` listed alongside the v4 plugin. v4 replaces all of that with `@theme inline` in CSS plus the appropriate framework plugin (`@tailwindcss/vite` for Vite, `@tailwindcss/postcss` for Next.js).
 - Walls of repeated Tailwind classes — extract a component.
