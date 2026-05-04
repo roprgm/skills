@@ -94,7 +94,7 @@ Prefer boring, popular, maintained tools. Avoid obscure dependencies unless ther
 
 ## UI Components
 
-Use Tailwind CSS by default. Tailwind configures via `@theme` in CSS — no `tailwind.config.{js,ts}`. With Vite, install `tailwindcss` and `@tailwindcss/vite`, add the plugin to `vite.config.ts`, and do not create a `postcss.config`. With Next.js, install `tailwindcss` and `@tailwindcss/postcss`, configure a one-line `postcss.config.mjs` with only `'@tailwindcss/postcss': {}`, and do not add `autoprefixer`, `postcss-import`, or `postcss-nested` — the Tailwind plugin handles them.
+Use Tailwind CSS v4. All config and integrations follow v4 conventions — `@theme` in CSS instead of `tailwind.config`, the framework plugin (`@tailwindcss/vite` for Vite, `@tailwindcss/postcss` for Next.js), and no `autoprefixer`, `postcss-import`, or `postcss-nested`.
 
 Prefer building local UI primitives in `components/ui` instead of immediately installing a component library.
 
