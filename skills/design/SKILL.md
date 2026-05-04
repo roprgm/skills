@@ -38,13 +38,12 @@ If a *foundational* value (a surface fill, a text color, the accent) isn't expre
 
 ## Tokens
 
-All design tokens live in one CSS file (typically `globals.css` or `app.css`). **Default to Tailwind v4** — declare runtime CSS custom properties in `:root` and `[data-theme="light"]`, then expose them as utility classes via a single `@theme inline` block in the same file. No `tailwind.config.{js,ts}` is needed; v4 reads the theme from CSS. Components consume tokens by name (`bg-surface-1`, `text-muted`, `h-control`) — never `var(...)` directly.
+All design tokens live in one CSS file (typically `globals.css` or `app.css`). Declare runtime CSS custom properties in `:root` and `[data-theme="light"]`, then expose them as utility classes via a single `@theme inline` block in the same file. No `tailwind.config.{js,ts}` — Tailwind reads the theme from CSS. Components consume tokens by name (`bg-surface-1`, `text-muted`, `h-control`) — never `var(...)` directly.
 
 ### Tailwind setup
 
-- **Vite + React:** install `tailwindcss` and `@tailwindcss/vite`, add the plugin to `vite.config.ts`. **Do not create `postcss.config.{js,ts,mjs}`** — v4 with the Vite plugin doesn't use PostCSS.
-- **Next.js:** install `tailwindcss` and `@tailwindcss/postcss`, configure a one-line `postcss.config.mjs` containing only `'@tailwindcss/postcss': {}`. **Do not include `autoprefixer`, `postcss-import`, `tailwindcss/nesting`, or `postcss-nested`** — the v4 plugin handles all of that.
-- **No `tailwind.config.{js,ts}`** — if a Tailwind v3 codebase still pins `tailwind.config`, mirror the same mappings in `theme.extend`. For everything new, prefer v4.
+- **Vite + React:** install `tailwindcss` and `@tailwindcss/vite`, add the plugin to `vite.config.ts`. Do not create a `postcss.config` — the Vite plugin does not use PostCSS.
+- **Next.js:** install `tailwindcss` and `@tailwindcss/postcss`, configure a one-line `postcss.config.mjs` with only `'@tailwindcss/postcss': {}`. Do not include `autoprefixer`, `postcss-import`, or `postcss-nested` — the Tailwind plugin handles them.
 
 ### Categories
 
@@ -212,7 +211,7 @@ Defaults to avoid unless there's a specific reason:
 - Vertical column dividers in tables.
 - Animated underlines, animated gradients, anything pulsing.
 - Inline styles for static design values (colors, font sizes, fixed spacing) when a token would express them. (Dynamic values — positions, offsets, measured sizes — are fine inline.)
-- **Tailwind v3 leftovers in a v4 project:** a separate `tailwind.config.{js,ts}` mapping CSS vars to colors/heights/etc., a `postcss.config.{js,ts,mjs}` in a Vite project, or `autoprefixer` / `postcss-import` / `postcss-nested` listed alongside the v4 plugin. v4 replaces all of that with `@theme inline` in CSS plus the appropriate framework plugin (`@tailwindcss/vite` for Vite, `@tailwindcss/postcss` for Next.js).
+- A `tailwind.config.{js,ts}` mapping CSS vars to colors/heights, a `postcss.config` in a Vite project, or `autoprefixer` / `postcss-import` / `postcss-nested` alongside the Tailwind plugin — none of these are needed. Tokens go in `@theme inline` in CSS; the Tailwind framework plugin (`@tailwindcss/vite` or `@tailwindcss/postcss`) handles the rest.
 - **Section titles using `text-lg`, `text-xl`, `text-2xl`, or any size above `text-base`.** Panel and section titles use `text-xs uppercase tracking-wide font-medium text-muted` against a `surface-2` band. Visual weight comes from the band and the tracking, never from a larger font.
 - **Default-state buttons using accent fill.** When a button has no explicit variant, it must be **secondary** (`surface-2` fill + `border-default`), not primary. Accent fill is opt-in for the single most important action of a region.
 - **Full-width primary buttons in sidebars, toolbars, or content areas.** Full-width is for form submit buttons in narrow forms and empty-state CTAs only.

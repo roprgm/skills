@@ -68,7 +68,7 @@ The folder structure should be easy for a human to navigate.
 
 Do not create folders just because a template usually has them. Create folders when they reduce cognitive load.
 
-Avoid the `src/` wrapper folder. Place code folders (`app`, `components`, `features`, `hooks`, `lib`, etc.) directly at the project root, sitting alongside the config files. The root staying clean is a function of folder organization and naming, not of nesting everything one level deeper. This applies to Vite, Next.js, and any other TypeScript React setup. If a tool's default scaffold puts code under `src/`, reconfigure it (Vite: move the entry file to the root and update the `<script>` tag in `index.html`).
+Avoid the `src/` wrapper folder. Place code folders (`app`, `components`, `features`, `hooks`, `lib`, etc.) directly at the project root, alongside the config files. The root stays clean through folder organization and naming, not by nesting everything one level deeper. This applies to all TypeScript React setups.
 
 If a folder would contain only one or two files, it often does not need to exist yet. If a folder grows beyond roughly 10–15 files, consider splitting it. Start simple, then introduce structure as the project grows.
 
@@ -94,7 +94,7 @@ Prefer boring, popular, maintained tools. Avoid obscure dependencies unless ther
 
 ## UI Components
 
-Use Tailwind CSS by default. For new projects, **default to Tailwind v4**, which configures via `@theme` in CSS rather than a separate `tailwind.config`. With Vite, install `tailwindcss` and `@tailwindcss/vite`, add the plugin to `vite.config.ts`, and do **not** create a `postcss.config` — v4 with the Vite plugin does not use PostCSS. With Next.js, install `tailwindcss` and `@tailwindcss/postcss`, configure a one-line `postcss.config.mjs` with only `'@tailwindcss/postcss': {}`, and do **not** add `autoprefixer`, `postcss-import`, or `postcss-nested` — the v4 plugin handles all of that. Only use Tailwind v3 conventions (`tailwind.config.{js,ts}`, autoprefixer, etc.) when the project is already pinned to v3.
+Use Tailwind CSS by default. Tailwind configures via `@theme` in CSS — no `tailwind.config.{js,ts}`. With Vite, install `tailwindcss` and `@tailwindcss/vite`, add the plugin to `vite.config.ts`, and do not create a `postcss.config`. With Next.js, install `tailwindcss` and `@tailwindcss/postcss`, configure a one-line `postcss.config.mjs` with only `'@tailwindcss/postcss': {}`, and do not add `autoprefixer`, `postcss-import`, or `postcss-nested` — the Tailwind plugin handles them.
 
 Prefer building local UI primitives in `components/ui` instead of immediately installing a component library.
 
