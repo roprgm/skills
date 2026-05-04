@@ -1,0 +1,22 @@
+{
+  "name": "roprgm-skills",
+  "owner": {
+    "name": "roprgm",
+    "email": "roprgm@gmail.com"
+  },
+  "metadata": {
+    "description": "Personal Agent Skills",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "design",
+      "description": "Opinionated, dense, neutral design language for React + Tailwind UIs",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/design"
+      ]
+    }
+  ]
+}

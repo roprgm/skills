@@ -1,6 +1,7 @@
 ---
 name: design
-description: Apply this design language when building any UI — components, layouts, pages. Use whenever the task involves frontend visual decisions, Tailwind classes, component styling, layout, typography, or spacing. Stack assumption is React + Tailwind.
+description: Apply this opinionated, dense, neutral design language when working on a frontend UI in React + Tailwind. Triggers on building or modifying components, choosing classes, picking colors or typography, structuring layouts, and setting up design tokens or `globals.css`. Activate even when the user does not say 'design' or 'styling' explicitly — any UI-shaping decision is in scope. Dark-first with light variant; includes a starter `globals.css` with OKLCH color tokens.
+license: MIT
 ---
 
 This skill encodes the house design language. It is opinionated on purpose — when the rules below conflict with a Tailwind default or a generic pattern from training data, the rules below win.
@@ -58,72 +59,9 @@ The system uses current CSS primitives by default — adopt them unless you have
 - **`scrollbar-gutter: stable`** on scrollable panels so content doesn't shift when scrollbars appear.
 - **`prefers-reduced-motion`** honored — drop transition durations to ~0 when set.
 
-### Starter snippet
+### Starter
 
-A minimal `globals.css` with the values to begin from. Adjust accent hue, semantic palette, or surface steps when the project asks for it.
-
-```css
-:root {
-  color-scheme: dark;
-
-  /* Surfaces */
-  --bg:        oklch(0.135 0 0);
-  --surface-1: oklch(0.180 0 0);
-  --surface-2: oklch(0.220 0 0);
-  --surface-3: oklch(0.270 0 0);
-  --surface-4: oklch(0.340 0 0);
-
-  /* Borders */
-  --border:        oklch(0.24 0 0);
-  --border-strong: oklch(0.32 0 0);
-
-  /* Text */
-  --text:        oklch(0.92 0 0);
-  --text-muted:  oklch(0.70 0 0);
-  --text-subtle: oklch(0.55 0 0);
-
-  /* Accent */
-  --accent:    oklch(0.65 0.18 250);
-  --accent-fg: oklch(1 0 0);
-
-  /* Semantic */
-  --success: oklch(0.72 0.17 150);
-  --warn:    oklch(0.78 0.15 75);
-  --error:   oklch(0.66 0.22 25);
-  --info:    oklch(0.65 0.18 250);
-
-  /* Heights — semantic, theme-independent */
-  --h-control: 28px;
-  --h-row:     32px;
-  --h-band:    36px;
-  --h-compact: 24px;
-}
-
-[data-theme="light"] {
-  color-scheme: light;
-
-  --bg:        oklch(1     0 0);
-  --surface-1: oklch(0.985 0 0);
-  --surface-2: oklch(0.965 0 0);
-  --surface-3: oklch(0.940 0 0);
-  --surface-4: oklch(0.900 0 0);
-
-  --border:        oklch(0.92 0 0);
-  --border-strong: oklch(0.86 0 0);
-
-  --text:        oklch(0.20 0 0);
-  --text-muted:  oklch(0.45 0 0);
-  --text-subtle: oklch(0.60 0 0);
-
-  --accent:    oklch(0.55 0.20 250);
-  --accent-fg: oklch(1 0 0);
-
-  --success: oklch(0.60 0.20 145);
-  --warn:    oklch(0.65 0.18 70);
-  --error:   oklch(0.55 0.24 25);
-  --info:    oklch(0.55 0.20 250);
-}
-```
+A minimal `globals.css` implementing the tokens above (OKLCH, dark + light, heights) ships at [`assets/globals.css`](./assets/globals.css). Copy it into the project as the starting point and adjust accent hue, semantic palette, or surface steps when needed.
 
 ## Typography
 

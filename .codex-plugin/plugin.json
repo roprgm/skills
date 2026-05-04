@@ -1,0 +1,6 @@
+{
+  "name": "roprgm-skills",
+  "version": "1.0.0",
+  "description": "Personal Agent Skills bundle",
+  "skills": "./skills/"
+}
