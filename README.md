@@ -1,6 +1,6 @@
 # skills
 
-A small collection of personal Claude Code skills, MIT-licensed.
+A small collection of personal Agent Skills, MIT-licensed.
 
 ## Available skills
 
@@ -8,19 +8,19 @@ A small collection of personal Claude Code skills, MIT-licensed.
 
 ## Using a skill
 
-Pick the skill you want and copy its directory into one of:
+Pick the skill you want and copy its directory into the location your agent reads skills from:
 
-- `~/.claude/skills/<name>/` — available globally across all your projects
+- `~/.claude/skills/<name>/` — available globally
 - `.claude/skills/<name>/` inside a project — scoped to that project
 
-For example, to use `design` globally:
+For example, to install `design` globally:
 
 ```sh
 mkdir -p ~/.claude/skills/design
 cp skills/design/SKILL.md ~/.claude/skills/design/
 ```
 
-Claude Code surfaces the skill automatically when the description matches the work at hand.
+Skills are surfaced automatically when their description matches the work at hand.
 
 ## License
 
