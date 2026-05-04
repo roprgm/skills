@@ -17,6 +17,15 @@
       "skills": [
         "./skills/design"
       ]
+    },
+    {
+      "name": "clean-web-development",
+      "description": "Clean, minimal, human-readable TypeScript React architecture and code style",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/clean-web-development"
+      ]
     }
   ]
 }

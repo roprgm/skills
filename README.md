@@ -7,6 +7,7 @@ Skills follow the open [Agent Skills](https://agentskills.io) format (a `SKILL.m
 ## Available skills
 
 - [`design`](skills/design/) — an opinionated, dense, neutral design language for React + Tailwind UIs. Encodes tokens, type scale, surface model, table and form conventions, and a starter `globals.css` (OKLCH, dark-first with light variant).
+- [`clean-web-development`](skills/clean-web-development/) — clean, minimal, human-readable TypeScript React architecture and code style. Covers stack selection (Next.js, Vite, Vite + Convex), folder structure, imports, dependencies, and the patterns that keep a codebase pleasant to read.
 
 ## Install
 
