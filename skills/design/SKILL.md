@@ -38,12 +38,9 @@ If a *foundational* value (a surface fill, a text color, the accent) isn't expre
 
 ## Tokens
 
-All design tokens live in one CSS file (typically `globals.css` or `app.css`). Declare runtime CSS custom properties in `:root` and `[data-theme="light"]`, then expose them as utility classes via a single `@theme inline` block in the same file. No `tailwind.config.{js,ts}` — Tailwind reads the theme from CSS. Components consume tokens by name (`bg-surface-1`, `text-muted`, `h-control`) — never `var(...)` directly.
+All design tokens live in one CSS file (typically `globals.css` or `app.css`). Declare runtime CSS custom properties in `:root` and `[data-theme="light"]`, then expose them as utility classes via a single `@theme inline` block in the same file. Components consume tokens by name (`bg-surface-1`, `text-muted`, `h-control`) — never `var(...)` directly.
 
-### Tailwind setup
-
-- **Vite + React:** install `tailwindcss` and `@tailwindcss/vite`, add the plugin to `vite.config.ts`. Do not create a `postcss.config` — the Vite plugin does not use PostCSS.
-- **Next.js:** install `tailwindcss` and `@tailwindcss/postcss`, configure a one-line `postcss.config.mjs` with only `'@tailwindcss/postcss': {}`. Do not include `autoprefixer`, `postcss-import`, or `postcss-nested` — the Tailwind plugin handles them.
+Use Tailwind CSS v4. All config and integrations follow v4 conventions — no `tailwind.config`, the framework plugin (`@tailwindcss/vite` for Vite, `@tailwindcss/postcss` for Next.js), and no `autoprefixer`, `postcss-import`, or `postcss-nested`.
 
 ### Categories
 
