@@ -48,8 +48,12 @@ All design tokens live in one CSS file (typically `globals.css` or `app.css`). *
 
 ### Categories
 
-- **Surfaces** — `bg`, `surface-1`, `surface-2`, `surface-3`, `surface-4`. Five levels for stepping through depth: `bg` is the page; `surface-1` is the primary panel; `surface-2` is a sticky band (table header, filter bar, sub-panel); `surface-3` is interactive state (hover, raised input chrome); `surface-4` is floating UI (popovers, modals, dropdowns). Five is intentional — the system targets dense desktop UIs that need more depth gradations than typical web apps.
-- **Borders** — `border` (hairline default), `border-strong` (dividers needing weight).
+- **Surfaces** — `bg`, `surface-1`, `surface-2`, `surface-3`, `surface-4`. Five levels for stepping through depth: `bg` is the page; `surface-1` is the primary panel; `surface-2` is a sticky band (panel header, table header, filter bar); `surface-3` is interactive state (hover, raised); `surface-4` is floating UI (popovers, modals, dropdowns). Inputs are an exception — they sit on `bg` regardless of the panel they live in (sunken, see Forms).
+- **Borders** — four weights for different roles. The hairline is the structural cut between top-level shell panels; the rest form a content-emphasis ladder.
+  - `border-hairline` — near-black in dark, faint gray in light. Cuts between top-level shell panels (sidebar/header/content) and beneath panel header bands. Almost no visual weight, just a seam.
+  - `border-subtle` — barely above the surface fill. Soft dividers between rows in a list, between fields in a form (often via `divide-border-subtle`).
+  - `border-default` — clearly visible. Card borders, input chrome, the secondary-button outline.
+  - `border-strong` — emphasis. Section breaks within a panel, dividers that need to read.
 - **Text** — `text` (primary, off-white in dark / off-black in light), `text-muted` (secondary), `text-subtle` (tertiary). These are the only three text colors.
 - **Accent** — `accent`, `accent-fg`. One brand color, held constant across themes (a slightly darker shade in light mode for contrast).
 - **Semantic** — `success`, `warn`, `error`, `info`. Reserved for meaning, not emphasis.
@@ -73,11 +77,13 @@ A minimal `globals.css` implementing the tokens above (OKLCH, dark + light, heig
 
 A starting scale with three sizes covers almost everything. Treat it as the default that prevents drift, not as a hard rule — extending it is fine when a real need shows up.
 
-- `text-xs` (12px) — badges, captions, table headers, helper text, breadcrumbs.
+- `text-xs` (12px) — badges, captions, table headers, **panel/section titles** (uppercase tracked, see below), helper text, breadcrumbs.
 - `text-sm` (13–14px, body default) — body and UI strings.
-- `text-base` (16px) — section titles.
+- `text-base` (16px) — **reserved.** Use only for the rare top-level app/page brand label (e.g. the app name in the top header). Inside the application, do **not** use `text-base font-semibold` for section titles — see the panel-header convention in the Surface model.
 
-Weights: `font-normal` by default; `font-medium` for emphasis (active nav item, selected tab, primary button label); `font-semibold` reserved for section titles. Weights above 600 are almost never right here.
+Weights: `font-normal` by default; `font-medium` for emphasis (active nav item, selected tab, primary button label, panel/section titles). `font-semibold` only on the rare top-level brand label. Weights above 600 are almost never right here.
+
+**Section title style:** in dense pro-tool UIs, panel and section titles do **not** scale up in size. They use `text-xs uppercase tracking-wide font-medium text-muted` and rely on the `surface-2` band beneath them for visual weight. The visual hierarchy comes from the band, the tracking, and the contrast — not from a larger font.
 
 Font stack — Geist (UI) + Geist Mono. Declared once in `tailwind.config`; used via `font-sans` / `font-mono`. Mono is for code, IDs, timestamps, file paths, and numeric table columns; everything else is sans.
 
@@ -93,14 +99,31 @@ Radius is mixed by purpose:
 
 Anything larger than `rounded-md` is almost always wrong here.
 
+### Common paddings
+
+Concrete defaults so paddings stay consistent across the app. Use these unless there's a real reason to deviate.
+
+| Surface | Padding |
+|---|---|
+| Top app/page bar (`h-8`, 32px tall) | `px-3` (12px horizontal) |
+| Panel header band (`h-7`, 28px tall) | `px-2` (8px horizontal) |
+| Panel content for forms / inspector | `p-3` (12px) with `space-y-3` between fields |
+| Card | `p-4` (16px); `p-3` for dense cards |
+| Toolbar (group of icon buttons) | `gap-1` (4px); `gap-0.5` (2px) for tightly grouped same-purpose icons |
+| List item | `px-2 py-1.5` (8px / 6px) |
+| Table cell | `px-2 py-1.5` |
+| Input | `h-7 px-2` |
+| Button (text) | `h-7 px-3` |
+
 ## Surface model
 
-Four arrangements cover almost everything:
+Five arrangements cover almost everything:
 
-1. **App shell — borders separate.** Sidebar, header, content area, status bar are siblings on `bg`, separated by 1px hairlines. No fill differences between them.
-2. **Card in panel — fill steps, no border.** A card inside a panel uses `surface-1` against the panel's `bg` (or steps from `surface-1` to `surface-2` if the panel is itself raised). No border on the card; the fill step is the boundary.
-3. **Inline state within a row.** Hover steps the fill up one level from the row's resting surface. Selection uses `accent` mixed at low opacity (`color-mix(in oklch, var(--accent), transparent 90%)`).
-4. **Floating elements.** Popovers, modals, dropdowns sit on `surface-4` with one shared shadow value. They are the only place shadows appear — in-flow elements never have shadows.
+1. **App shell — borders separate.** Sidebar, header, content area, status bar are siblings on `bg`, separated by 1px `border-hairline` lines. No fill differences between them.
+2. **Workspace panel.** A titled panel uses `surface-1` fill with a 1px `border-hairline` outer border and `rounded-sm` corners. The title sits in a band at the top: 28px tall (`--h-control`), `surface-2` fill, 8px horizontal padding (`px-2`), 1px `border-hairline` border-bottom, holding the panel title (left, see Section title style) and any icon-only actions (right). Content scrolls independently below the band.
+3. **Card in panel — fill steps, no border.** A card inside a panel uses `surface-2` against the panel's `surface-1`. No border on the card; the fill step is the boundary.
+4. **Inline state within a row.** Hover steps the fill up one level from the row's resting surface. Selection uses `accent` mixed at low opacity (`color-mix(in oklch, var(--accent), transparent 90%)`).
+5. **Floating elements.** Popovers, modals, dropdowns sit on `surface-4` with one shared shadow value. They are the only place shadows appear — in-flow elements never have shadows.
 
 ## Density
 
@@ -112,6 +135,16 @@ Heights are tokenized in `globals.css` and referenced by name in component code,
 - `--h-compact` — icon-only buttons, filter chips, small controls.
 
 Defaults are tuned for desktop power use; deviate when there's a real reason. Hit targets stay ≥24px even when visual height is smaller — extend the click area with padding.
+
+## Button variants
+
+Three color variants. Used deliberately, not interchangeably:
+
+- **Primary** — `accent` fill, `accent-fg` text. Reserved for the **single most important action** of a region (a dialog "Save", a form submit). At most one primary per visible region. Sidebar create actions, toolbar buttons, and "Cancel" buttons are **not** primary.
+- **Secondary** — `surface-2` fill with 1px `border-default`, `text` color. Hover steps the fill to `surface-3`. **This is the default variant.** When in doubt, secondary. Use for almost every button: sidebar actions, toolbar primaries, list-item triggers, dialog cancels.
+- **Ghost** — transparent at rest, `text-muted` color. Hover fills with `surface-2` and lifts text to `text`. For dense toolbars, table row actions, and inline triggers where even a secondary border would be too much chrome.
+
+All three share `--h-control` (28px) height and `px-3` horizontal padding. Width is **content-sized** — full-width is reserved for form submit buttons in narrow forms and empty-state CTAs.
 
 ## Color usage discipline
 
@@ -144,8 +177,9 @@ Encode the conventions below as reusable abstractions so pages compose from them
 Conventions:
 
 - Input height: `--h-control`.
+- **Input background: `bg`** (the deepest surface), regardless of the surface the input sits on. The depth difference makes the input feel carved into its containing panel rather than floating on top — this is what gives the dense pro-tool look. Never give an input the same fill as its container.
 - Label above the input — never inline (segmented controls excepted). Label is `text-xs text-muted` with a 4px gap to the input.
-- Border 1px `border`. Focus replaces the border with `accent`, no glow, no ring growth.
+- Border 1px `border-default`. Focus replaces the border with `accent`, no glow, no ring growth.
 - Error replaces the border with `error`; helper text below is `text-xs text-error`, same 4px gap.
 - Non-error helper text is `text-xs text-subtle`, same 4px gap.
 - Field group gap 8px. Section gap 16px.
@@ -179,4 +213,9 @@ Defaults to avoid unless there's a specific reason:
 - Animated underlines, animated gradients, anything pulsing.
 - Inline styles for static design values (colors, font sizes, fixed spacing) when a token would express them. (Dynamic values — positions, offsets, measured sizes — are fine inline.)
 - **Tailwind v3 leftovers in a v4 project:** a separate `tailwind.config.{js,ts}` mapping CSS vars to colors/heights/etc., a `postcss.config.{js,ts,mjs}` in a Vite project, or `autoprefixer` / `postcss-import` / `postcss-nested` listed alongside the v4 plugin. v4 replaces all of that with `@theme inline` in CSS plus the appropriate framework plugin (`@tailwindcss/vite` for Vite, `@tailwindcss/postcss` for Next.js).
+- **Section titles using `text-lg`, `text-xl`, `text-2xl`, or any size above `text-base`.** Panel and section titles use `text-xs uppercase tracking-wide font-medium text-muted` against a `surface-2` band. Visual weight comes from the band and the tracking, never from a larger font.
+- **Default-state buttons using accent fill.** When a button has no explicit variant, it must be **secondary** (`surface-2` fill + `border-default`), not primary. Accent fill is opt-in for the single most important action of a region.
+- **Full-width primary buttons in sidebars, toolbars, or content areas.** Full-width is for form submit buttons in narrow forms and empty-state CTAs only.
+- **Buttons taller than `--h-control` (28px).** Visual hierarchy comes from variant choice (primary / secondary / ghost), not from size.
+- **Inputs with the same fill as their containing panel.** Inputs sit on `bg` (deepest), which makes them read as sunken into the `surface-1` panel. Same-fill inputs flatten the depth entirely.
 - Walls of repeated Tailwind classes — extract a component.
