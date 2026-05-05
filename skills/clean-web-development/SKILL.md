@@ -96,6 +96,8 @@ Prefer boring, popular, maintained tools. Avoid obscure dependencies unless ther
 
 Use Tailwind CSS v4. All config and integrations follow v4 conventions — `@theme` in CSS instead of `tailwind.config`, the framework plugin (`@tailwindcss/vite` for Vite, `@tailwindcss/postcss` for Next.js), and no `autoprefixer`, `postcss-import`, or `postcss-nested`.
 
+Always create a `cn` helper at `lib/cn.ts` using `clsx` + `tailwind-merge`, and use it for every component className that merges or conditionalizes classes. Joining class arrays with `[...].join(" ")` is wrong — `cn(...)` is the only acceptable pattern.
+
 Prefer building local UI primitives in `components/ui` instead of immediately installing a component library.
 
 Use `shadcn/ui` only when the user asks for it or when the project clearly benefits from several accessible UI primitives. Do not add it by default for simple projects.
