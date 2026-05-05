@@ -30,7 +30,7 @@ The single most important rule: **don't sprinkle the same Tailwind cluster acros
 These are the defaults in component code. They keep the foundation consistent and themeable. They are not laws — when there's a real reason to deviate, deviate.
 
 - **Font sizes** — by default, Tailwind classes (`text-xs`, `text-sm`, `text-base`). Avoid `style={{fontSize:...}}` and arbitrary `text-[13px]` in regular component code. If a needed size isn't in the scale, extend the Tailwind config rather than inlining.
-- **Colors** — by default, prefer tokenized utility classes (`bg-surface-1`, `text-muted`, `border-default`, `bg-accent`) so theming and palette changes propagate cleanly. This is a default, not a hard rule: when the user asks for a specific color, or when the app has many business-logic-driven colors (status palettes, category tags, user-defined labels, brand variations) where tokenizing each would create dozens of single-use names, put the color wherever is clearest — arbitrary Tailwind class, a small color map module, a Tailwind theme extension. Don't refuse a direct color request to honor the default.
+- **Colors** — by default, prefer tokenized utility classes (`bg-surface-1`, `text-muted-foreground`, `border`, `bg-accent`) so theming and palette changes propagate cleanly. This is a default, not a hard rule: when the user asks for a specific color, or when the app has many business-logic-driven colors (status palettes, category tags, user-defined labels, brand variations) where tokenizing each would create dozens of single-use names, put the color wherever is clearest — arbitrary Tailwind class, a small color map module, a Tailwind theme extension. Don't refuse a direct color request to honor the default.
 - **Spacing & radius** — by default, Tailwind scale (`p-2`, `gap-2`, `rounded-sm`). Inline pixel values are fine for dynamic positioning; avoid them for static design spacing.
 - **Component-specific exception** — values genuinely one-off and tied to a component's internal mechanics (tooltip arrow offset, measured grid column, drag handle position) are fine inline. The rule is about not bypassing the system for *foundational design values*, not about avoiding raw values entirely.
 
@@ -44,14 +44,12 @@ Use Tailwind CSS v4. All config and integrations follow v4 conventions — no `t
 
 ### Categories
 
-- **Surfaces** — `bg`, `surface-1`, `surface-2`, `surface-3`, `surface-4`. Five levels for stepping through depth: `bg` is the page; `surface-1` is the primary panel; `surface-2` is a sticky band (panel header, table header, filter bar); `surface-3` is interactive state (hover, raised); `surface-4` is floating UI (popovers, modals, dropdowns). Inputs are an exception — they sit on `bg` regardless of the panel they live in (sunken, see Forms).
-- **Borders** — four weights for different roles. The hairline is the structural cut between top-level shell panels; the rest form a content-emphasis ladder.
-  - `border-hairline` — near-black in dark, faint gray in light. Cuts between top-level shell panels (sidebar/header/content) and beneath panel header bands. Almost no visual weight, just a seam.
-  - `border-subtle` — barely above the surface fill. Soft dividers between rows in a list, between fields in a form (often via `divide-border-subtle`).
-  - `border-default` — clearly visible. Card borders, input chrome, the secondary-button outline.
-  - `border-strong` — emphasis. Section breaks within a panel, dividers that need to read.
-- **Text** — `text` (primary, off-white in dark / off-black in light), `text-muted` (secondary), `text-subtle` (tertiary). These are the only three text colors.
-- **Accent** — `accent`, `accent-fg`. One brand color, held constant across themes (a slightly darker shade in light mode for contrast).
+- **Surfaces** — `surface-0`, `surface-1`, `surface-2`, `surface-3`, `surface-4`. Five levels for stepping through depth: `surface-0` is the page; `surface-1` is the primary panel; `surface-2` is a sticky band (panel header, table header, filter bar); `surface-3` is interactive state (hover, raised); `surface-4` is floating UI (popovers, modals, dropdowns). The ladder direction is consistent across themes — `surface-0` is closest to the page, `surface-4` the most distant. In light mode that means `surface-4` is *darker* than `surface-0`, not lighter. Inputs are an exception (see Forms).
+- **Borders** — two roles. Both are computed from `--foreground` with alpha (via `color-mix`), so they adapt to the surface beneath and to the active theme without separate per-theme values.
+  - default — most borders (cards, inputs, buttons, shell separation). Class: `border`.
+  - rule — softer in-content divider for rows in a list or fields in a form. Class: `border-rule`, or `divide-rule` for stacked dividers.
+- **Foreground** — three hierarchy levels: `foreground` (primary), `muted-foreground` (secondary), `subtle-foreground` (tertiary). Tailwind classes: `text-foreground`, `text-muted-foreground`, `text-subtle-foreground`. These are the only three text colors.
+- **Accent** — `accent` plus `accent-foreground` (text/icons sitting on top of accent fill). One brand color, held constant across themes (a slightly darker shade in light mode for contrast).
 - **Semantic** — `success`, `warn`, `error`, `info`. Reserved for meaning, not emphasis.
 
 ### Modern foundations
@@ -79,7 +77,7 @@ A starting scale with three sizes covers almost everything. Treat it as the defa
 
 Weights: `font-normal` by default; `font-medium` for emphasis (active nav item, selected tab, primary button label, panel/section titles). `font-semibold` only on the rare top-level brand label. Weights above 600 are almost never right here.
 
-**Section title style:** in dense pro-tool UIs, panel and section titles do **not** scale up in size. They use `text-xs uppercase tracking-wide font-medium text-muted` and rely on the `surface-2` band beneath them for visual weight. The visual hierarchy comes from the band, the tracking, and the contrast — not from a larger font.
+**Section title style:** in dense pro-tool UIs, panel and section titles do **not** scale up in size. They use `text-xs uppercase tracking-wide font-medium text-muted-foreground` and rely on the `surface-2` band beneath them for visual weight. The visual hierarchy comes from the band, the tracking, and the contrast — not from a larger font.
 
 Font stack — Geist (UI) + Geist Mono. Declared once in `tailwind.config`; used via `font-sans` / `font-mono`. Mono is for code, IDs, timestamps, file paths, and numeric table columns; everything else is sans.
 
@@ -115,8 +113,8 @@ Concrete defaults so paddings stay consistent across the app. Use these unless t
 
 Five arrangements cover almost everything:
 
-1. **App shell — borders separate.** Sidebar, header, content area, status bar are siblings on `bg`, separated by 1px `border-hairline` lines. No fill differences between them.
-2. **Workspace panel.** A titled panel uses `surface-1` fill with a 1px `border-hairline` outer border and `rounded-sm` corners. The title sits in a band at the top: 28px tall (`--h-control`), `surface-2` fill, 8px horizontal padding (`px-2`), 1px `border-hairline` border-bottom, holding the panel title (left, see Section title style) and any icon-only actions (right). Content scrolls independently below the band.
+1. **App shell — borders separate.** Sidebar, header, content area, status bar are siblings on `surface-0`, separated by 1px `border` lines. No fill differences between them.
+2. **Workspace panel.** A titled panel uses `surface-1` fill with a 1px `border` and `rounded-sm` corners. The title sits in a band at the top: 28px tall (`h-control`), `surface-2` fill, 8px horizontal padding (`px-2`), 1px `border` bottom, holding the panel title (left, see Section title style) and any icon-only actions (right). Content scrolls independently below the band.
 3. **Card in panel — fill steps, no border.** A card inside a panel uses `surface-2` against the panel's `surface-1`. No border on the card; the fill step is the boundary.
 4. **Inline state within a row.** Hover steps the fill up one level from the row's resting surface. Selection uses `accent` mixed at low opacity (`color-mix(in oklch, var(--accent), transparent 90%)`).
 5. **Floating elements.** Popovers, modals, dropdowns sit on `surface-4` with one shared shadow value. They are the only place shadows appear — in-flow elements never have shadows.
@@ -136,18 +134,18 @@ Defaults are tuned for desktop power use; deviate when there's a real reason. Hi
 
 Three color variants. Used deliberately, not interchangeably:
 
-- **Primary** — `accent` fill, `accent-fg` text. Reserved for the **single most important action** of a region (a dialog "Save", a form submit). At most one primary per visible region. Sidebar create actions, toolbar buttons, and "Cancel" buttons are **not** primary.
-- **Secondary** — `surface-2` fill with 1px `border-default`, `text` color. Hover steps the fill to `surface-3`. **This is the default variant.** When in doubt, secondary. Use for almost every button: sidebar actions, toolbar primaries, list-item triggers, dialog cancels.
-- **Ghost** — transparent at rest, `text-muted` color. Hover fills with `surface-2` and lifts text to `text`. For dense toolbars, table row actions, and inline triggers where even a secondary border would be too much chrome.
+- **Primary** — `bg-accent` fill, `text-accent-foreground` text. Reserved for the **single most important action** of a region (a dialog "Save", a form submit). At most one primary per visible region. Sidebar create actions, toolbar buttons, and "Cancel" buttons are **not** primary.
+- **Secondary** — `bg-surface-2` fill with 1px `border`, `text-foreground` color. Hover steps the fill to `surface-3`. **This is the default variant.** When in doubt, secondary. Use for almost every button: sidebar actions, toolbar primaries, list-item triggers, dialog cancels.
+- **Ghost** — transparent at rest, `text-muted-foreground`. Hover fills with `surface-2` and lifts text to `text-foreground`. For dense toolbars, table row actions, and inline triggers where even a secondary border would be too much chrome.
 
 All three share `--h-control` (28px) height and `px-3` horizontal padding. Width is **content-sized** — full-width is reserved for form submit buttons in narrow forms and empty-state CTAs.
 
 ## Color usage discipline
 
-- Text uses three tokens only (`text`, `text-muted`, `text-subtle`). Don't invent a fourth gray.
-- No pure white on dark, no pure black on light. Use `text`.
+- Text uses three tokens only (`text-foreground`, `text-muted-foreground`, `text-subtle-foreground`). Don't invent a fourth gray.
+- No pure white on dark, no pure black on light. Use `text-foreground`.
 - Accent appears at most once per visible region. A page with a primary "Save" button does not also have an accent-colored selected row in the same viewport — pick one.
-- Semantic colors are reserved for meaning. Don't tint a button green to make it feel positive; use `success` only on something that actually represents success.
+- Semantic colors are reserved for status meaning. `success` / `warn` / `error` / `info` mean exactly that — a successful operation, a warning state, an error, an informational notice. **Never use them for category, kind, type, or arbitrary tone** (e.g., `bg-success` for a "Data" node kind, `bg-info` for a "Task" kind). For categorical colors that aren't statuses, define a project-local palette outside the semantic tokens.
 - Hover is not accent. Hover on a list row is a fill step (`surface-1` → `surface-2`).
 - Disabled state is `opacity-50`, not a new color.
 
@@ -157,14 +155,14 @@ Tables are the most opinionated surface in this system, and the most prone to cl
 
 Conventions:
 
-- Row height: `--h-row`. 1px hairline divider between rows. **No vertical column lines.**
-- Header row sticky, fill `surface-2`, labels in `text-xs uppercase tracking-wide font-medium text-muted`.
+- Row height: `h-row`. 1px `border-rule` divider between rows. **No vertical column lines.**
+- Header row sticky, fill `surface-2`, labels in `text-xs uppercase tracking-wide font-medium text-muted-foreground`.
 - Row hover steps the fill up one level from the row's resting surface. No accent on hover.
 - Row selected fills to `accent` at ~10% opacity (mix via `color-mix(in oklch, ...)`, not rgba). Selected + hover: ~14%.
 - Sort affordance is a single chevron right of the header label. Inactive sort is invisible (shown only on hover or when active). No double-arrow icon.
-- Checkbox column: width matches `--h-row`; checkbox itself 14×14px, centered.
+- Checkbox column: width matches `h-row`; checkbox itself 14×14px, centered.
 - Numeric / mono columns use `font-mono tabular-nums`, right-aligned.
-- Filter bar above the table uses `--h-band`, fill `surface-1`, separated from the table by a hairline. Filter chips are pill-shaped (`rounded-full`), height `--h-compact`, `text-xs`.
+- Filter bar above the table uses `h-band`, fill `surface-1`, separated from the table by `border` (default). Filter chips are pill-shaped (`rounded-full`), height `h-compact`, `text-xs`.
 
 ## Forms & inputs
 
@@ -172,16 +170,16 @@ Encode the conventions below as reusable abstractions so pages compose from them
 
 Conventions:
 
-- Input height: `--h-control`.
-- **Input background: `bg`** (the deepest surface), regardless of the surface the input sits on. The depth difference makes the input feel carved into its containing panel rather than floating on top — this is what gives the dense pro-tool look. Never give an input the same fill as its container.
-- Label above the input — never inline (segmented controls excepted). Label is `text-xs text-muted` with a 4px gap to the input.
-- Border 1px `border-default`. Focus replaces the border with `accent`, no glow, no ring growth.
+- Input height: `h-control`.
+- **Input background: `bg-surface-0`** (the deepest surface), regardless of the surface the input sits on. The depth difference makes the input feel carved into its containing panel rather than floating on top. Never give an input the same fill as its container.
+- Label above the input — never inline (segmented controls excepted). Label is `text-xs text-muted-foreground` with a 4px gap to the input.
+- Border 1px `border`. Focus replaces the border color with `accent`, no glow, no ring growth.
 - Error replaces the border with `error`; helper text below is `text-xs text-error`, same 4px gap.
-- Non-error helper text is `text-xs text-subtle`, same 4px gap.
+- Non-error helper text is `text-xs text-subtle-foreground`, same 4px gap.
 - Field group gap 8px. Section gap 16px.
-- Required marker is a single `*` in `text-muted` after the label. Don't color it red.
-- Placeholder is `text-subtle`. Never used as a substitute for the label.
-- Segmented controls share `--h-control` and the input border, with 1px internal dividers. Selected segment fills to `surface-2` and bolds to `font-medium`. No internal radius — outer corners follow the input.
+- Required marker is a single `*` in `text-muted-foreground` after the label. Don't color it red.
+- Placeholder is `text-subtle-foreground`. Never used as a substitute for the label.
+- Segmented controls share `h-control` and the input border, with 1px internal `border-rule` dividers. Selected segment fills to `surface-2` and bolds to `font-medium`. No internal radius — outer corners follow the input.
 - Checkbox / radio 14×14px. Checkbox `rounded-sm`, radio `rounded-full`. Checked fill `accent`.
 
 ## Motion
@@ -210,8 +208,8 @@ Defaults to avoid unless there's a specific reason:
 - Inline styles for static design values (colors, font sizes, fixed spacing) when a token would express them. (Dynamic values — positions, offsets, measured sizes — are fine inline.)
 - A `tailwind.config.{js,ts}` mapping CSS vars to colors/heights, a `postcss.config` in a Vite project, or `autoprefixer` / `postcss-import` / `postcss-nested` alongside the Tailwind plugin — none of these are needed. Tokens go in `@theme inline` in CSS; the Tailwind framework plugin (`@tailwindcss/vite` or `@tailwindcss/postcss`) handles the rest.
 - **Section titles using `text-lg`, `text-xl`, `text-2xl`, or any size above `text-base`.** Panel and section titles use `text-xs uppercase tracking-wide font-medium text-muted` against a `surface-2` band. Visual weight comes from the band and the tracking, never from a larger font.
-- **Default-state buttons using accent fill.** When a button has no explicit variant, it must be **secondary** (`surface-2` fill + `border-default`), not primary. Accent fill is opt-in for the single most important action of a region.
+- **Default-state buttons using accent fill.** When a button has no explicit variant, it must be **secondary** (`surface-2` fill + 1px `border`), not primary. Accent fill is opt-in for the single most important action of a region.
 - **Full-width primary buttons in sidebars, toolbars, or content areas.** Full-width is for form submit buttons in narrow forms and empty-state CTAs only.
 - **Buttons taller than `--h-control` (28px).** Visual hierarchy comes from variant choice (primary / secondary / ghost), not from size.
-- **Inputs with the same fill as their containing panel.** Inputs sit on `bg` (deepest), which makes them read as sunken into the `surface-1` panel. Same-fill inputs flatten the depth entirely.
+- **Inputs with the same fill as their containing panel.** Inputs sit on `surface-0` (deepest), which makes them read as sunken into the `surface-1` panel. Same-fill inputs flatten the depth entirely.
 - Walls of repeated Tailwind classes — extract a component.

@@ -68,19 +68,17 @@ The folder structure should be easy for a human to navigate.
 
 Do not create folders just because a template usually has them. Create folders when they reduce cognitive load.
 
-Avoid the `src/` wrapper folder. Place code folders (`app`, `components`, `features`, `hooks`, `lib`, etc.) directly at the project root, alongside the config files. The root stays clean through folder organization and naming, not by nesting everything one level deeper. This applies to all TypeScript React setups.
-
 If a folder would contain only one or two files, it often does not need to exist yet. If a folder grows beyond roughly 10–15 files, consider splitting it. Start simple, then introduce structure as the project grows.
 
 Keep generic shared code separate from domain-specific code.
 
-Root-level shared folders such as `components`, `hooks`, and `lib` should contain generic reusable code. Domain-specific code should move into `features` once the project has enough size, many components, or clear product areas.
+Root-level shared folders such as `components`, `hooks`, and `lib` should contain generic reusable code. Domain-specific code moves into `features/` only once the app has enough size and at least two or three distinct product domains. A small app with a single workspace does not need a `features/` folder — the code lives at the root or under `components/`.
 
 A feature is a self-contained product module. It owns the components, hooks, helpers, state, and logic that belong to that part of the product. Do not create fake feature folders: features should reflect real product domains or areas.
 
-A feature can be small and simple, with only an `index.ts` plus a few local files. It can also have its own internal `components`, `hooks`, `lib`, or other folders when it grows. Inside a feature, the same general rules apply: stay simple when there are few files, split folders when the module grows, and keep the structure easy to scan.
+A feature can have its own internal `components`, `hooks`, `lib`, or other folders when it grows. Inside a feature, the same general rules apply: stay simple when there are few files, split folders when the module grows, and keep the structure easy to scan.
 
-Each feature should expose its public API through `index.ts`. Treat `index.ts` as an intentional boundary, not as a place to blindly re-export everything. When another feature or app-level file needs to use a feature, import from the feature entrypoint instead of reaching into private internals.
+Each feature exposes its public API through `index.ts`, which is **only re-exports** — the implementation lives in named files (`feature-name.tsx`, sub-components, hooks). An `index.ts` that contains hundreds of lines of implementation is wrong; split it. Treat `index.ts` as an intentional boundary, not as a place to blindly re-export everything.
 
 Features may depend on each other when the domain relationship is natural, but unnecessary coupling and circular dependencies should be avoided. The app layer should compose features; it should not become a place where all product logic accumulates.
 
@@ -94,7 +92,7 @@ Prefer boring, popular, maintained tools. Avoid obscure dependencies unless ther
 
 ## UI Components
 
-Use Tailwind CSS v4. All config and integrations follow v4 conventions — `@theme` in CSS instead of `tailwind.config`, the framework plugin (`@tailwindcss/vite` for Vite, `@tailwindcss/postcss` for Next.js), and no `autoprefixer`, `postcss-import`, or `postcss-nested`.
+Use Tailwind CSS v4. All config and integrations follow v4 conventions — `@theme` in CSS instead of `tailwind.config`, the framework plugin (`@tailwindcss/vite` for Vite, `@tailwindcss/postcss` for Next.js), and no `autoprefixer`, `postcss-import`, or `postcss-nested`. Use mobile-first breakpoints (`sm:`, `md:`, `lg:`) by default; reach for `max-*` only when desktop is the primary case and small-screen handling is the override.
 
 Always create a `cn` helper at `lib/cn.ts` using `clsx` + `tailwind-merge`, and use it for every component className that merges or conditionalizes classes. Joining class arrays with `[...].join(" ")` is wrong — `cn(...)` is the only acceptable pattern.
 
@@ -153,7 +151,7 @@ The key idea is that the product’s complexity lives mostly in the browser. The
 
 Use Vite for this case.
 
-For Vite apps, place code folders (`app`, `components`, `features`, `hooks`, `lib`) directly at the project root — do not use the default `src/` wrapper. The Vite entry (`main.tsx`) lives at the root and is referenced from `index.html` as `/main.tsx`. Apply the same simple-to-feature-based folder progression. Keep `main.tsx` and `app.tsx` focused on bootstrapping and high-level composition.
+For Vite apps, follow the framework's default layout (`src/`) and apply the same simple-to-feature-based folder progression inside it. Keep `main.tsx` and `app.tsx` focused on bootstrapping and high-level composition.
 
 Add a router when the app has real navigation. Prefer React Router or TanStack Router instead of manual route conditionals in one large file.
 

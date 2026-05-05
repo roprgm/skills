@@ -3,31 +3,31 @@
 :root {
   color-scheme: dark;
 
-  /* Surfaces — neutral ladder, near-black to subtle elevation */
-  --bg:        oklch(0.155 0 0);  /* #141414 */
-  --surface-1: oklch(0.205 0 0);  /* #1c1c1c */
-  --surface-2: oklch(0.252 0 0);  /* #262626 */
-  --surface-3: oklch(0.295 0 0);  /* #303030 */
-  --surface-4: oklch(0.337 0 0);  /* #3a3a3a */
+  /* Surfaces — neutral ladder, deepest at surface-0 */
+  --surface-0: oklch(0.155 0 0);  /* page bg */
+  --surface-1: oklch(0.205 0 0);  /* primary panel */
+  --surface-2: oklch(0.252 0 0);  /* sticky band, sub-panel */
+  --surface-3: oklch(0.295 0 0);  /* hover, raised */
+  --surface-4: oklch(0.337 0 0);  /* floating UI (popovers, modals) */
 
-  /* Borders — four weights. hairline cuts between top-level shell panels;
-     subtle / default / strong form a content-emphasis ladder. */
-  --border-hairline: oklch(0.108 0 0);  /* #0a0a0a — near-black structural cut */
-  --border-subtle:   oklch(0.272 0 0);  /* #2a2a2a — barely above surface-1 */
-  --border-default:  oklch(0.318 0 0);  /* #353535 — visible (cards, inputs, buttons) */
-  --border-strong:   oklch(0.405 0 0);  /* #4a4a4a — emphasis dividers */
+  /* Foreground — three hierarchy levels (primary / secondary / tertiary) */
+  --foreground:        oklch(0.875 0 0);
+  --muted-foreground:  oklch(0.660 0 0);
+  --subtle-foreground: oklch(0.490 0 0);
 
-  /* Text — limited ramp; off-white avoids eye strain */
-  --text:        oklch(0.875 0 0);  /* #d6d6d6 */
-  --text-muted:  oklch(0.660 0 0);  /* #8a8a8a */
-  --text-subtle: oklch(0.490 0 0);  /* #5e5e5e */
+  /* Borders — foreground with alpha so they adapt to whatever surface
+     sits behind them and to the active theme automatically. Override
+     --foreground in the light theme and borders follow without their
+     own override. */
+  --border: color-mix(in oklch, var(--foreground), transparent 82%);  /* default */
+  --rule:   color-mix(in oklch, var(--foreground), transparent 92%);  /* subtle divider */
 
-  /* Accent — single brand color. Use color-mix(in oklch, var(--accent), ...)
-     for hover/active/translucent variants. */
-  --accent:    oklch(0.65 0.18 250);
-  --accent-fg: oklch(1 0 0);
+  /* Accent */
+  --accent:            oklch(0.65 0.18 250);
+  --accent-foreground: oklch(1 0 0);
 
-  /* Semantic — reserved for status meaning, not general UI */
+  /* Semantic — reserved for status meaning (success / warning / error /
+     info). Never use these for category or kind tones. */
   --success: oklch(0.72 0.17 150);
   --warn:    oklch(0.78 0.15 75);
   --error:   oklch(0.66 0.22 25);
@@ -43,23 +43,25 @@
 [data-theme="light"] {
   color-scheme: light;
 
-  --bg:        oklch(1     0 0);
+  /* Surfaces — surface-0 is the page (lightest); surface-4 is the most
+     elevated, which in light mode means slightly darker than the page so
+     popovers/modals still read as raised. The ladder direction is
+     consistent with dark (surface-0 closest to the page, surface-4 the
+     most distant). */
+  --surface-0: oklch(1     0 0);
   --surface-1: oklch(0.985 0 0);
   --surface-2: oklch(0.965 0 0);
   --surface-3: oklch(0.940 0 0);
   --surface-4: oklch(0.900 0 0);
 
-  --border-hairline: oklch(0.86 0 0);
-  --border-subtle:   oklch(0.94 0 0);
-  --border-default:  oklch(0.88 0 0);
-  --border-strong:   oklch(0.78 0 0);
+  --foreground:        oklch(0.20 0 0);
+  --muted-foreground:  oklch(0.45 0 0);
+  --subtle-foreground: oklch(0.60 0 0);
 
-  --text:        oklch(0.20 0 0);
-  --text-muted:  oklch(0.45 0 0);
-  --text-subtle: oklch(0.60 0 0);
+  /* --border and --rule auto-follow --foreground through color-mix; no override needed. */
 
-  --accent:    oklch(0.55 0.20 250);
-  --accent-fg: oklch(1 0 0);
+  --accent:            oklch(0.55 0.20 250);
+  --accent-foreground: oklch(1 0 0);
 
   --success: oklch(0.60 0.20 145);
   --warn:    oklch(0.65 0.18 70);
@@ -67,26 +69,34 @@
   --info:    oklch(0.55 0.20 250);
 }
 
-/* Expose the runtime CSS vars to Tailwind v4 as utility classes. */
+/* Expose tokens to Tailwind v4 as utility classes.
+   Surfaces  → bg-surface-0 .. bg-surface-4
+   Borders   → border (default) | border-rule | divide-rule
+   Foreground→ text-foreground | text-muted-foreground | text-subtle-foreground
+   Accent    → bg-accent / text-accent-foreground
+   Semantic  → bg-success / bg-warn / bg-error / bg-info
+   Heights   → h-control / h-row / h-band / h-compact */
 @theme inline {
-  --color-bg:              var(--bg);
-  --color-surface-1:       var(--surface-1);
-  --color-surface-2:       var(--surface-2);
-  --color-surface-3:       var(--surface-3);
-  --color-surface-4:       var(--surface-4);
-  --color-border-hairline: var(--border-hairline);
-  --color-border-subtle:   var(--border-subtle);
-  --color-border-default:  var(--border-default);
-  --color-border-strong:   var(--border-strong);
-  --color-text:            var(--text);
-  --color-muted:           var(--text-muted);
-  --color-subtle:          var(--text-subtle);
-  --color-accent:          var(--accent);
-  --color-accent-fg:       var(--accent-fg);
-  --color-success:         var(--success);
-  --color-warn:            var(--warn);
-  --color-error:           var(--error);
-  --color-info:            var(--info);
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-4: var(--surface-4);
+
+  --color-border: var(--border);
+  --color-rule:   var(--rule);
+
+  --color-foreground:         var(--foreground);
+  --color-muted-foreground:   var(--muted-foreground);
+  --color-subtle-foreground:  var(--subtle-foreground);
+
+  --color-accent:             var(--accent);
+  --color-accent-foreground:  var(--accent-foreground);
+
+  --color-success: var(--success);
+  --color-warn:    var(--warn);
+  --color-error:   var(--error);
+  --color-info:    var(--info);
 
   --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
