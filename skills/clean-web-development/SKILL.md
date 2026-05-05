@@ -34,6 +34,8 @@ For new TypeScript web projects, prefer TypeScript, React, Bun, Tailwind CSS, Bi
 
 Use the latest stable versions for new projects. Before using a framework or library API in a non-trivial way, consult current official documentation when tool access allows. Follow the currently recommended patterns instead of legacy APIs or outdated examples.
 
+If something can be done more simply, do it more simply. This applies to every decision — scaffolds, configs, dependencies, folders, abstractions. Default scaffolds tend to ship legacy artifacts (for example, a separate `tsconfig.node.json` from older Vite templates is not needed in modern Vite + Bun setups). Question every file the scaffold creates, drop what isn't needed, and reach for the simpler equivalent whenever the result is the same.
+
 Code, comments, examples, file names, and project language should be in English. Prefer names that make comments unnecessary. Add comments only when they explain non-obvious intent, constraints, or tradeoffs.
 
 Keep functions small and focused. A function should usually do one thing. If a function becomes hard to read, grows too long, or mixes responsibilities, extract the secondary concern into another function.
