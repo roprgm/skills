@@ -151,7 +151,7 @@ The key idea is that the product’s complexity lives mostly in the browser. The
 
 Use Vite for this case.
 
-For Vite apps, follow the framework's default layout (`src/`) and apply the same simple-to-feature-based folder progression inside it. Keep `main.tsx` and `app.tsx` focused on bootstrapping and high-level composition.
+For Vite apps, scaffold with the framework's default and keep code under `src/`. Apply the same simple-to-feature-based folder progression inside `src/`. Keep `main.tsx` and `app.tsx` focused on bootstrapping and high-level composition.
 
 Add a router when the app has real navigation. Prefer React Router or TanStack Router instead of manual route conditionals in one large file.
 
