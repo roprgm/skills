@@ -12,18 +12,17 @@
   --color-surface-4: light-dark(oklch(0.900 0 0), oklch(0.337 0 0));
 
   /* Foreground — three hierarchy levels (primary / secondary / tertiary). */
-  --color-foreground:        light-dark(oklch(0.20 0 0), oklch(0.875 0 0));
-  --color-muted-foreground:  light-dark(oklch(0.45 0 0), oklch(0.660 0 0));
-  --color-subtle-foreground: light-dark(oklch(0.60 0 0), oklch(0.490 0 0));
+  --color-foreground:         light-dark(oklch(0.20 0 0), oklch(0.875 0 0));
+  --color-foreground-muted:   light-dark(oklch(0.45 0 0), oklch(0.660 0 0));
+  --color-foreground-subtle:  light-dark(oklch(0.60 0 0), oklch(0.490 0 0));
 
   /* Lines — three levels parallel to the surface stack. Derived from
      foreground with alpha so they adapt to whatever surface sits behind
      them and to the active theme automatically. Used for borders,
-     dividers, separators. */
+     dividers, separators. line-2 is the default (see @layer base below). */
   --color-line-1: color-mix(in oklch, var(--color-foreground), transparent 92%);
   --color-line-2: color-mix(in oklch, var(--color-foreground), transparent 82%);
   --color-line-3: color-mix(in oklch, var(--color-foreground), transparent 70%);
-  --color-border: var(--color-line-2);  /* default for the `border` class */
 
   /* Accent */
   --color-accent:            light-dark(oklch(0.55 0.20 250), oklch(0.65 0.18 250));
@@ -53,10 +52,11 @@
 :root                 { color-scheme: dark; }
 [data-theme="light"]  { color-scheme: light; }
 
-/* Tailwind v4 defaults border-color to currentColor when you write `border`
-   alone — that produces text-colored borders. Reset every element's
-   default border-color to line-2 so `border` (no suffix) uses the token
-   and only an explicit color override changes it. */
+/* Tailwind v4 leaves border-color at currentColor unless you set a default,
+   which produces text-colored borders. Reset every element's border-color
+   to line-2 so `border` (no color suffix) and `divide-y` children use the
+   design token. Override with `border-line-1` / `border-line-3` when you
+   need a different level. */
 @layer base {
   *,
   ::before,
