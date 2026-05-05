@@ -38,27 +38,29 @@ If a *foundational* value (a surface fill, a text color, the accent) isn't expre
 
 ## Tokens
 
-All design tokens live in one CSS file (typically `globals.css` or `app.css`). Declare runtime CSS custom properties in `:root` and `[data-theme="light"]`, then expose them as utility classes via a single `@theme inline` block in the same file. Components consume tokens by name (`bg-surface-1`, `text-muted`, `h-control`) — never `var(...)` directly.
+All design tokens live in **`globals.css`** — a single file containing the `@theme` block, the `color-scheme` declarations that drive theme switching, and the small set of global resets the design system requires (e.g. the default border-color reset). Component-scoped CSS, third-party library style imports, and any other non-global stylesheet goes in separate files imported where they're used — keep `globals.css` for design tokens and global concerns only.
 
-Use Tailwind CSS v4. All config and integrations follow v4 conventions — no `tailwind.config`, the framework plugin (`@tailwindcss/vite` for Vite, `@tailwindcss/postcss` for Next.js), and no `autoprefixer`, `postcss-import`, or `postcss-nested`.
+Use Tailwind CSS v4. All config and integrations follow v4 conventions — no `tailwind.config`, the framework plugin (`@tailwindcss/vite` for Vite, `@tailwindcss/postcss` for Next.js), and no `autoprefixer`, `postcss-import`, or `postcss-nested`. Components consume tokens by Tailwind utility class (`bg-surface-1`, `text-muted-foreground`, `h-control`) — never `var(...)` directly.
 
 ### Categories
 
-- **Surfaces** — `surface-0`, `surface-1`, `surface-2`, `surface-3`, `surface-4`. Five levels for stepping through depth: `surface-0` is the page; `surface-1` is the primary panel; `surface-2` is a sticky band (panel header, table header, filter bar); `surface-3` is interactive state (hover, raised); `surface-4` is floating UI (popovers, modals, dropdowns). The ladder direction is consistent across themes — `surface-0` is closest to the page, `surface-4` the most distant. In light mode that means `surface-4` is *darker* than `surface-0`, not lighter. Inputs are an exception (see Forms).
-- **Borders** — two roles. Both are computed from `--foreground` with alpha (via `color-mix`), so they adapt to the surface beneath and to the active theme without separate per-theme values.
-  - default — most borders (cards, inputs, buttons, shell separation). Class: `border`.
-  - rule — softer in-content divider for rows in a list or fields in a form. Class: `border-rule`, or `divide-rule` for stacked dividers.
+- **Surfaces** — `surface-0` → `surface-4`. Five levels for stepping through depth: `surface-0` is the page, `surface-1` the primary panel, `surface-2` a sticky band (panel header, table header, filter bar), `surface-3` interactive state (hover, raised), `surface-4` floating UI (popovers, modals, dropdowns). The ladder direction is consistent across themes — `surface-0` closest to the page, `surface-4` the most distant. In light that means `surface-4` is *darker* than `surface-0`, not lighter. Inputs are an exception (see Forms).
+- **Lines** — `line-1`, `line-2`, `line-3`. Three levels parallel to the surface stack, used for borders, dividers, and separators. Derived from foreground via alpha (`color-mix`), so they adapt to the surface beneath and to the active theme automatically.
+  - `line-1` — softest. In-content dividers between rows in a list or fields in a form (typically via `divide-line-1`). Almost a hairline.
+  - `line-2` — default. Cards, inputs, buttons, shell separation. **`border` (no suffix) uses this** thanks to a global reset; only override with `border-line-1` / `border-line-3` when you need a different level.
+  - `line-3` — strongest. Section breaks within a panel, dividers that need to read clearly.
 - **Foreground** — three hierarchy levels: `foreground` (primary), `muted-foreground` (secondary), `subtle-foreground` (tertiary). Tailwind classes: `text-foreground`, `text-muted-foreground`, `text-subtle-foreground`. These are the only three text colors.
 - **Accent** — `accent` plus `accent-foreground` (text/icons sitting on top of accent fill). One brand color, held constant across themes (a slightly darker shade in light mode for contrast).
-- **Semantic** — `success`, `warn`, `error`, `info`. Reserved for meaning, not emphasis.
+- **Semantic** — `success`, `warn`, `error`, `info`. Reserved for status meaning, not emphasis (see Color usage discipline).
 
 ### Modern foundations
 
 The system uses current CSS primitives by default — adopt them unless you have a reason not to:
 
 - **OKLCH for color values** — perceptually uniform, so the surface stack steps evenly in lightness regardless of hue. Use it for every color token.
-- **`color-mix(in oklch, ...)`** for derived colors (accent at 10% for a selected row, hover tints) instead of rgba math or pre-baked alpha tokens.
-- **`color-scheme`** declared per theme so native form controls, scrollbars, autofill, and date pickers follow the active theme.
+- **`light-dark()`** in token definitions so each token holds both theme values in one line. The active value follows `color-scheme`, eliminating duplicate per-theme blocks.
+- **`color-mix(in oklch, ...)`** for derived colors (accent at 10% for a selected row, line tokens from foreground) instead of rgba math or pre-baked alpha tokens.
+- **`color-scheme`** declared per theme so native form controls, scrollbars, autofill, and date pickers follow the active theme — and so `light-dark()` resolves correctly.
 - **`text-wrap: balance`** on multi-line section titles.
 - **`scrollbar-gutter: stable`** on scrollable panels so content doesn't shift when scrollbars appear.
 - **`prefers-reduced-motion`** honored — drop transition durations to ~0 when set.
@@ -155,7 +157,7 @@ Tables are the most opinionated surface in this system, and the most prone to cl
 
 Conventions:
 
-- Row height: `h-row`. 1px `border-rule` divider between rows. **No vertical column lines.**
+- Row height: `h-row`. 1px `border-line-1` divider between rows (or `divide-y divide-line-1` on the row stack). **No vertical column lines.**
 - Header row sticky, fill `surface-2`, labels in `text-xs uppercase tracking-wide font-medium text-muted-foreground`.
 - Row hover steps the fill up one level from the row's resting surface. No accent on hover.
 - Row selected fills to `accent` at ~10% opacity (mix via `color-mix(in oklch, ...)`, not rgba). Selected + hover: ~14%.
@@ -179,7 +181,7 @@ Conventions:
 - Field group gap 8px. Section gap 16px.
 - Required marker is a single `*` in `text-muted-foreground` after the label. Don't color it red.
 - Placeholder is `text-subtle-foreground`. Never used as a substitute for the label.
-- Segmented controls share `h-control` and the input border, with 1px internal `border-rule` dividers. Selected segment fills to `surface-2` and bolds to `font-medium`. No internal radius — outer corners follow the input.
+- Segmented controls share `h-control` and the input border, with 1px internal `border-line-1` dividers. Selected segment fills to `surface-2` and bolds to `font-medium`. No internal radius — outer corners follow the input.
 - Checkbox / radio 14×14px. Checkbox `rounded-sm`, radio `rounded-full`. Checked fill `accent`.
 
 ## Motion

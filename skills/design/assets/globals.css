@@ -1,108 +1,67 @@
 @import "tailwindcss";
 
-:root {
-  color-scheme: dark;
+@theme {
+  /* Surfaces — neutral ladder. surface-0 closest to the page, surface-4
+     most distant. Consistent across themes (in light, surface-4 is
+     darker than surface-0; in dark, lighter). light-dark() resolves
+     to the first arg under color-scheme: light, the second under dark. */
+  --color-surface-0: light-dark(oklch(1     0 0), oklch(0.155 0 0));
+  --color-surface-1: light-dark(oklch(0.985 0 0), oklch(0.205 0 0));
+  --color-surface-2: light-dark(oklch(0.965 0 0), oklch(0.252 0 0));
+  --color-surface-3: light-dark(oklch(0.940 0 0), oklch(0.295 0 0));
+  --color-surface-4: light-dark(oklch(0.900 0 0), oklch(0.337 0 0));
 
-  /* Surfaces — neutral ladder, deepest at surface-0 */
-  --surface-0: oklch(0.155 0 0);  /* page bg */
-  --surface-1: oklch(0.205 0 0);  /* primary panel */
-  --surface-2: oklch(0.252 0 0);  /* sticky band, sub-panel */
-  --surface-3: oklch(0.295 0 0);  /* hover, raised */
-  --surface-4: oklch(0.337 0 0);  /* floating UI (popovers, modals) */
+  /* Foreground — three hierarchy levels (primary / secondary / tertiary). */
+  --color-foreground:        light-dark(oklch(0.20 0 0), oklch(0.875 0 0));
+  --color-muted-foreground:  light-dark(oklch(0.45 0 0), oklch(0.660 0 0));
+  --color-subtle-foreground: light-dark(oklch(0.60 0 0), oklch(0.490 0 0));
 
-  /* Foreground — three hierarchy levels (primary / secondary / tertiary) */
-  --foreground:        oklch(0.875 0 0);
-  --muted-foreground:  oklch(0.660 0 0);
-  --subtle-foreground: oklch(0.490 0 0);
-
-  /* Borders — foreground with alpha so they adapt to whatever surface
-     sits behind them and to the active theme automatically. Override
-     --foreground in the light theme and borders follow without their
-     own override. */
-  --border: color-mix(in oklch, var(--foreground), transparent 82%);  /* default */
-  --rule:   color-mix(in oklch, var(--foreground), transparent 92%);  /* subtle divider */
+  /* Lines — three levels parallel to the surface stack. Derived from
+     foreground with alpha so they adapt to whatever surface sits behind
+     them and to the active theme automatically. Used for borders,
+     dividers, separators. */
+  --color-line-1: color-mix(in oklch, var(--color-foreground), transparent 92%);
+  --color-line-2: color-mix(in oklch, var(--color-foreground), transparent 82%);
+  --color-line-3: color-mix(in oklch, var(--color-foreground), transparent 70%);
+  --color-border: var(--color-line-2);  /* default for the `border` class */
 
   /* Accent */
-  --accent:            oklch(0.65 0.18 250);
-  --accent-foreground: oklch(1 0 0);
+  --color-accent:            light-dark(oklch(0.55 0.20 250), oklch(0.65 0.18 250));
+  --color-accent-foreground: oklch(1 0 0);
 
   /* Semantic — reserved for status meaning (success / warning / error /
      info). Never use these for category or kind tones. */
-  --success: oklch(0.72 0.17 150);
-  --warn:    oklch(0.78 0.15 75);
-  --error:   oklch(0.66 0.22 25);
-  --info:    oklch(0.65 0.18 250);
+  --color-success: light-dark(oklch(0.60 0.20 145), oklch(0.72 0.17 150));
+  --color-warn:    light-dark(oklch(0.65 0.18 70),  oklch(0.78 0.15 75));
+  --color-error:   light-dark(oklch(0.55 0.24 25),  oklch(0.66 0.22 25));
+  --color-info:    light-dark(oklch(0.55 0.20 250), oklch(0.65 0.18 250));
 
-  /* Heights — semantic, theme-independent */
-  --h-control: 28px;
-  --h-row:     32px;
-  --h-band:    36px;
-  --h-compact: 24px;
-}
+  /* Heights — semantic, theme-independent. */
+  --height-control: 28px;
+  --height-row:     32px;
+  --height-band:    36px;
+  --height-compact: 24px;
 
-[data-theme="light"] {
-  color-scheme: light;
-
-  /* Surfaces — surface-0 is the page (lightest); surface-4 is the most
-     elevated, which in light mode means slightly darker than the page so
-     popovers/modals still read as raised. The ladder direction is
-     consistent with dark (surface-0 closest to the page, surface-4 the
-     most distant). */
-  --surface-0: oklch(1     0 0);
-  --surface-1: oklch(0.985 0 0);
-  --surface-2: oklch(0.965 0 0);
-  --surface-3: oklch(0.940 0 0);
-  --surface-4: oklch(0.900 0 0);
-
-  --foreground:        oklch(0.20 0 0);
-  --muted-foreground:  oklch(0.45 0 0);
-  --subtle-foreground: oklch(0.60 0 0);
-
-  /* --border and --rule auto-follow --foreground through color-mix; no override needed. */
-
-  --accent:            oklch(0.55 0.20 250);
-  --accent-foreground: oklch(1 0 0);
-
-  --success: oklch(0.60 0.20 145);
-  --warn:    oklch(0.65 0.18 70);
-  --error:   oklch(0.55 0.24 25);
-  --info:    oklch(0.55 0.20 250);
-}
-
-/* Expose tokens to Tailwind v4 as utility classes.
-   Surfaces  → bg-surface-0 .. bg-surface-4
-   Borders   → border (default) | border-rule | divide-rule
-   Foreground→ text-foreground | text-muted-foreground | text-subtle-foreground
-   Accent    → bg-accent / text-accent-foreground
-   Semantic  → bg-success / bg-warn / bg-error / bg-info
-   Heights   → h-control / h-row / h-band / h-compact */
-@theme inline {
-  --color-surface-0: var(--surface-0);
-  --color-surface-1: var(--surface-1);
-  --color-surface-2: var(--surface-2);
-  --color-surface-3: var(--surface-3);
-  --color-surface-4: var(--surface-4);
-
-  --color-border: var(--border);
-  --color-rule:   var(--rule);
-
-  --color-foreground:         var(--foreground);
-  --color-muted-foreground:   var(--muted-foreground);
-  --color-subtle-foreground:  var(--subtle-foreground);
-
-  --color-accent:             var(--accent);
-  --color-accent-foreground:  var(--accent-foreground);
-
-  --color-success: var(--success);
-  --color-warn:    var(--warn);
-  --color-error:   var(--error);
-  --color-info:    var(--info);
-
+  /* Fonts */
   --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+}
 
-  --height-control: var(--h-control);
-  --height-row:     var(--h-row);
-  --height-band:    var(--h-band);
-  --height-compact: var(--h-compact);
+/* color-scheme drives light-dark(). :root is dark by default;
+   [data-theme="light"] flips it. To support system preference instead,
+   replace these with @media (prefers-color-scheme: light). */
+:root                 { color-scheme: dark; }
+[data-theme="light"]  { color-scheme: light; }
+
+/* Tailwind v4 defaults border-color to currentColor when you write `border`
+   alone — that produces text-colored borders. Reset every element's
+   default border-color to line-2 so `border` (no suffix) uses the token
+   and only an explicit color override changes it. */
+@layer base {
+  *,
+  ::before,
+  ::after,
+  ::backdrop {
+    border-color: var(--color-line-2);
+  }
 }
